@@ -20,23 +20,27 @@ A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module
 
 ### Project Obejctive
 
-- **Goal**: The primary goal of this project was to design, build, and program a robot, called Romi, capable of autonomously completing a predefined course using cooperative multitasking
-- **Tasks**:
-  - Detecting and following a black line while making the necessary route adjustments.
-  - Navigating through a grid/tunnel section using heading information from a onboard IMU.
-  - Detecting and responding to obstacles using bump sensors to detect collisions.
-- **Solution**: We implemented a line sensor, bump sensor, and IMU heading information to navigate and complete the track.
+**Goal**: The primary goal of this project was to design, build, and program a robot, called Romi, capable of autonomously completing a predefined course using cooperative multitasking
+
+**Tasks**:
+- Detecting and following a black line while making the necessary route adjustments.
+- Navigating through a grid/tunnel section using heading information from a onboard IMU.
+- Detecting and responding to obstacles using bump sensors to detect collisions.
+
+**Solution**: We implemented a line sensor, bump sensor, and IMU heading information to navigate and complete the track.
 
 **Track Reference**:
-Below is a picture of the track used for the run:
 
 ```markdown
 ![Track Layout](docs/track_layout.jpg)
 ```
-Romi can:
-1. Follow black lines using IR sensors and a PID controller.  
-2. Navigate a grid/tunnel utilizing IMU headings and encoder distance data.  
-3. Detect collisions using bump sensors and respond accordingly.
+**Romi can**:
+  1. Follow black lines using IR sensors and a PID controller.  
+  2. Navigate a grid/tunnel utilizing IMU headings and encoder distance data.  
+  3. Detect collisions using bump sensors and respond accordingly.
+
+**Romi Setup**:
+
 
 **Demonstration**:
 ```markdown
