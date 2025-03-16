@@ -85,7 +85,28 @@ This wiring diagram helped us ensure real-time feedback and control, which at th
 
 ## Mechanical Design
 
-Due to our team selecting that
+The mechanical design modifications to the original Romi chasis were primarily driven by the need to accomodate our long 14mm x 13 line sensor at the front of Romi. This key adjustment lead to one more smaller modification to the bump sensors. All the necessary CAD files for these modifications can be found in the CAD folder at the top of the repository. 
+
+### Line Sensor Mount
+Due to our line sensor being 14 mm in length the conventional standoff configuration rendered impractical without additional modifications. To securely mount our line sensor, we 3D printed custom bracket arms, as shown below. These bracket arms allowed us to use the original standoffs and position the line sensor flush with the bottom of Romis chassis and at the very front of Romi for optimal performance. 
+
+**CAD picture of Line-Sensor Arms**
+```mardown
+CAD picture of the Mounts
+```
+
+### Bump Sensor Mounts
+In adjusting our Romi chassis to accommodate thr line sensor, we inadvertently caused some fitment issues with the bump sensors. The bolts securing the standoffs prevented the bump sensors from sitting flush on top of Romi. Additionally, the bump sensors did not extend far enough past the line sensor, leaving it exposed and failing to detect collisions in these places. To resolve this, we fabricated two custom brackets: an L-shaped bracket and a straight bracket for each of the bump sensors. These brackets allowed the sensors to be mounted securely while ensuring they extended far enough to protect the line sensor and detect obstacles effectively. Furthermore, each bracket was __mm thick, allowing a precise fit above the bolts securing components at the bottom of the Romi chassis. Finally, the combination of both brackets allowed for the bump sensors to remain rigid and in place, including after collision. 
+
+**CAD Picture of Bump Bracket Arms**
+```mardown
+CAD picture of the Mounts
+```
+
+### Romi Assembly
+The bracket arms for the line sensors were secured using M2.5 bolts while the bracket arms for the bump sensors were secured using M2.0 bolts. Additionally, the bump sensors used washers and M2.0 nuts to fully secure the bump sensors onto the Romi chassis. The fully assembled Romi can be seen in the picture below. 
+
+
 
 ## Motor Characterization
 To properly control the DC motors we performed characterization tests for the left and right motors, to find the motors gain, time constant, and minimal effort required to make the motor turn. The tests consisted of producing a step response by setting the percent PWM going to each of the motors from 0% to 70%. We collected the Time, Position, and Velocity of each of the motors, at a sampling rate of 1000Hz, and saw how the properties of the motor evolved over time.
