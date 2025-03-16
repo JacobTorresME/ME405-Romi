@@ -1,4 +1,4 @@
-# Mechatronics II Romi Project
+# Mechatronics Romi Project
 A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module)
 
 ## Table of Contents
@@ -154,4 +154,130 @@ The resulting values determined in this step are shown below
 `main.py` is the central coordinating file that initializes shared data structures and creates task objects. In addition, it uses cooperative multitasking through the use of `cotask` to "hop" between tasks. Most importantly, this is were you set up each individual task and manage which tasks run, in what order, and how frequentely. 
 
 **Inner Workings**:
+1. **Share Initialization**
+   - At the top of `main.py`, there is multiple lines of code that create shared variables using `task_share.Share()`.
+   - Examples are shown below:
+   ```python
+   yaw_rate       = task_share.Share('f', thread_protect=False, name="yaw_rate")
+   omega_r        = task_share.Share('f', thread_protect=False, name="omega_r")
+   run_flg        = task_share.Share('i', thread_protect=False, name="run_flg")
+   ...
+   ```
 
+   Each of these labels is a global data structute for inter-task communication. An example of this is, `yaw_rate` is a float that tasks can write to (e.g., line-following logic) and read from (e.g., motor tasks)
+
+2. **Task Creation**
+   - `main.py` also instantiates each task object from the corresponding task file
+   - This file gives each task object 3 things:
+     - A priority (the order in which the schedular checks the task)
+     - A period (How oftern they should run, in milliseconds)
+     - A list of shared variables that they need to read from or write to.
+   - For example:
+     ```python
+     task2 = cotask.Task(task2_right_motor.generator, name="Task_2",
+                        priority=4, period=10, profile=True, trace=False, 
+                        shares=(omega_r, run_flg))
+     ```
+3. **Schedular Setup**
+   - After creating tasks, `main.py` appends each one to `cotask.task_list` and then calls `cotask.task_list.pri_sched()`. This runs a infinite loop that continously calls each task's generator function in order of priority, handling and executing multiple tasks at the same time behind the scenes.
+
+4. **Exception Handling and Cleanup**
+   - The file wraps the scheduling call in a `try-except` block to catch runtime erros and `KeyboardInterrupt` that stops the program. When a error occurs, it disables the motors and prints a message exiting safely. 
+
+**Table of Shared Variables**
+| Variable           | Type   | Description |
+|--------------------|--------|-------------|
+| `yaw_rate`        | *float* | Desired yaw rate (turning speed) for steering. |
+| `omega_r` / `omega_l` | *float* | Angular velocity commands for the right and left motors, respectively. |
+| `run_flg`         | *int*   | Flag indicating whether the motors should be running (`1`) or stopped (`0`). |
+| `grid_flg`        | *int*   | Signals the robot to enter or exit grid/tunnel navigation logic. |
+| `fwd_flg`         | *int*   | Controls movement: **1 = Forward**, **2 = Backward**, **0 = Idle**. |
+| `line_follow_flg` | *int*   | Enables (`1`) or disables (`0`) line-following logic. |
+| `line_flg`        | *int*   | Indicates whether a line was **lost (1)** or **found (0)** (used by Master Mind for transitions). |
+| `line_value`      | *int*   | Numeric data about line detection (**0 = On-line**, **1 = Off-line**). |
+| `bump_flg`        | *int*   | Collision detection flag, set to **`1`** when a bumper switch is triggered. |
+
+These shares are a key component that enables tasks to communicate in a cooperative manner.
+
+### Tasks
+
+Each one of these tasks use a **Finite State Machine** within each of their `generator()` functions. Each tasks `generator()` function starts typically with a `S0_STANBY`, `S1_RUN`, etc., and transitions occur based on flags or sensor readings.  
+
+#### **1. MM.py (Master Mind)**
+
+- **Purpose**: Acts as the main handler, it implements a FSM machine to control overall behavior
+- **FSM States**:
+1. `S0_STANDBY`:
+    - Waits for a user button press or for the `run_flg` to become `
+    - One triggered, it moves to finding the.
+2. `S1_FIND_LINE`:
+    - Tells the motors to drive straight until the Infrared sensors detect a line.
+    - Once a line is found it sets `line_follow_flg = 1` and transitions.
+3. `S2_LEVEL_1` (Line Follow Mode)
+    - Starts the line-following action. Monitors `line_flg` to see if it has lost the line or detects an intersection, moves to next state.
+    - If a the `bump_flg = 1` (collision occurs, it transitions to a collision handling state.
+4. `S3_GRID_LEVEL`
+    - Sets `grid_flg = 1` and allows **grid_task.py** to take over. This may occur when the robot has traveled a certain distance or reached a marker.
+    - Exits the state once the grid/tunnel section is done. 
+5. `S4_EXIT_TUNNEL`
+    - Handles the logic when leaving the tunnel or grid area. It check the `line_value` variable to find a line.
+6. `S5_HITTING_WALL`
+    - A state that keeps driving forward until the bump sensors are triggered.  
+    - When the collision occurs, sets `bump_flg = 1`; transitions to next state.
+7. `S6_MOV_BACK`  
+     - Moves backward a certain distance (setting `fwd_flg = 2`).  
+     - When done, transitions to the next state.
+8. `S7_TURN_NORTH`  
+     - Uses IMU heading to rotate Romi back north.  
+     - When the heading is aligned, transitions to next state.
+9. `S8_DRIVE_NORTH`  
+     - Drives Romi north and uses encoders to measure distance.  
+     - Moves to the next state upon reaching a certain distance.
+10. `S9_TURN_WEST`  
+      - Another heading-based rotation points Romi west.  
+      - Waits until heading is correct, then transitions to next state.
+11. `S10_DRIVE_WEST`  
+      - Drives west for a set distance using the encoders to measure distance traveled.  
+      - Moves to the next state upon reaching a certain distance.
+12. `S11_TURN_SOUTH` / `S12_DRIVE_SOUTH`  
+      - These states align the robot south and drive it, eventually returning to the starting point.
+
+- **Key Variables**  
+  - `run_flg` to see if it should run or not.  
+  - `bump_flg` for collisions.  
+  - `line_flg` / `grid_flg` to move between line follow and grid tasks.  
+  - `fwd_flg` sets forward or backward motion.
+  - `yaw_rate` or `omega_r/l` for controlling turning or speed in each state.
+
+- **How it Works**:
+  - Each Finite State Machine state in the generator function checks relevant flags/sensors.  
+  - If conditions are met it transitions to the next state.
+  - This set up allows Master Mind to set a step by step process for Romi from initial placement all the way back to the start.
+
+  
+
+#### **2. grid_task.py**
+
+- **Purpose**: This task is in charge of the grid/tunnel navigation portion, using an internal FSM to perform heading adjustments and distance-based travel.
+- **FSM Structure**
+  1. `S0_INIT`  
+     - Reads and stores the robot’s current IMU heading.  
+     - Waits for `grid_flg == 1`.
+  2. `S1_STANDBY`  
+     - Idle state, monitoring `grid_flg`.
+     - If `grid_flg` becomes 1 it proceeds to the next state.
+  3. `S2_TURN_SOUTH`  
+     - Alings Romis heading to 2880, representing south.  
+     - Continuously reads the heading from the IMU
+     - Updates `yaw_rate` using a small heading PID (or direct turn logic).  
+     - Once aligned, sets `fwd_flg = 1`and transitions to the next state.
+  4. `S3_DRIVE_SOUTH`  
+     - Moves forward until encoders indicate a certain distance.  
+     - Once the distance is reached it transitions to the next state.  
+     - Once the tunnel ends it sets `grid_flg = 0` to exit grid mode.
+  5. `S4_TURN_WEST`  
+     - Alings Romis heading to 4320, representing West.
+     - Then sets `fwd_flg = 1` and transitions to the next state.
+  6. `S5_DRIVE_WEST`, etc.  
+     - Additional states as needed to complete the route.  
+     - Each drive state checks encoders to track distance, transitions out when done.
