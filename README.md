@@ -388,7 +388,7 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
   - Provides read/write functions for calibration or operation modes.
 - **Assigned to Help**:
   - **grid_task.py**: uses this class for cardinal direction turning.
-  - **MM.py**: for advanced orientation-based state transitions. CARTER VERIFY THIS!!!
+  - **MM.py**: uses this class for cardinal directions to help with transitions
 
 #### 4. IR_Array.py
 - **Purpose**: This class combines multiple IR sensors into one array, providing a centroid.
@@ -420,7 +420,7 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 - **Assigned to Help**:
   - **motorstask.py**: with speed or velocity control.
   - **line_task.py**: with offset correction for line following.
-  - **grid_task.py**: for heading alignment. CARTER VERIFY THIS
+  - **grid_task.py**: feeds feeds dir to control heading.
 
 #### 7. task_Bump.py
 - **Purpose**: This class sets up the low-level bumper inputs, configuring interrupts or polling to detect contact.
