@@ -2,10 +2,9 @@
 A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module)
 
 ## Table of Contents
-- [Overview & Objectives](#overview)
+- [Overview & Objectives](#overview--objectives)
 - [Features](#features)
 - [Bill of Materials (BOM)](#bill-of-materials-bom)
-- [Dependencies & Installation](#dependencies--installation)
 - [Motor Characterization](#motor-characterization)
 - [State-Space Model](#state-space-model)
 - [Electrical Design](#electrical-design)
@@ -55,7 +54,7 @@ The Romi has to be placed inside of the starting box facing the first line. The 
 4. **MicroPython**: A STM32-based microcontroller runs python and leverages `cotask` and `task_share` for real-time task scheduling. Additionally, tasks are split into distinct `.py` modules to enable cooperative multitasking.
 5. **Custom Mounts**: Custom 3D printed line sensor and bump senser mounts were implemented to allow for proper installation and usage.
 
-## Bill of Materials 
+## Bill of Materials (BOM)
 | Item                | Quantity | Description                     | Link / Source       |
 |---------------------|----------|---------------------------------|---------------------|
 | Pololu Romi Chassis | 1        | Romi base with 2 DC motors      | [Pololu Romi](...)  |
@@ -66,5 +65,17 @@ The Romi has to be placed inside of the starting box facing the first line. The 
 | Bump Switches       | 4        | Collision sensors               | [Switches](...)     |
 | Assorted Wires      | Many     | Jumper cables, etc.            | —                   |
 
+## Motor Characterization
 
+
+## State-Space Model
+
+
+## Electrical Design
+
+
+## Mechanical Design
+
+
+## Code Descriptions
 
