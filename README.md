@@ -274,6 +274,9 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 4. `S3_DRIVE_SOUTH`  
      - Moves forward until encoders indicate a certain distance.  
      - Once the distance is reached it transitions to the next state.  
+5. `S4_TURN_WEST`
+     - A final aligment step. Waits until heading is 4320, correspoding to West.
+     - Sets `fwd_flg = 1` before returning to standby state.
      - Once the tunnel ends it sets `grid_flg = 0` to exit grid mode.
   
 - **Key Variables**  
