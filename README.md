@@ -199,6 +199,8 @@ The resulting values determined in this step are shown below
 
 These shares are a key component that enables tasks to communicate in a cooperative manner.
 
+---
+
 ### Tasks
 
 Each one of these tasks use a **Finite State Machine** within each of their `generator()` functions. Each tasks `generator()` function starts typically with a `S0_STANBY`, `S1_RUN`, etc., and transitions occur based on flags or sensor readings.  
@@ -253,8 +255,6 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
   - Each Finite State Machine state in the generator function checks relevant flags/sensors.  
   - If conditions are met it transitions to the next state.
   - This set up allows Master Mind to set a step by step process for Romi from initial placement all the way back to the start.
-
-  
 
 #### **2. grid_task.py**
 
@@ -311,12 +311,51 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 - **Purpose**: The task is in charge of alerting the system when the line is lost or re-found.
 - **FSM State Breakdown**
 1. `S0_LOOK_FOR_LINE`
-    - If IR data indicates a line is lost, sets `line_flg = 1`, transitions to `S1_LOOK_FOR_ACK`.  
+    - If the data received from the IR indicates is no line it sets `line_flg = 1` and transitions to the next state.
 2. `S1_LOOK_FOR_ACK`  
-    - Waits until `line_flg` is cleared. Then returns to `S0_LOOK_FOR_LINE`.
+    - Waits until `line_flg` is cleared, once it is cleared it returns to `S0_LOOK_FOR_LINE`.
 - **Key Variables**  
   - `line_flg`, `line_value`.  
 - **How It Works**  
-  - Summation or threshold logic checks IR readings.  
-  - If it crosses a threshold, notifies the rest of the system via `line_flg`.  
+  - A set threshhold checks IR readings.  
+  - If it crosses this threshold it notifies the rest of the system using the `line_flg` share.  
   - Master Mind or line_task acknowledges by resetting `line_flg`.
+ 
+#### **5. motorstask.py**
+
+- **Purpose**: This task performs closed-loop motor control for left and right wheels. It performs this by reading the encoders and applying PID or a feedfoward gain.
+- **FSM**  
+1. `S0_STANDBY`
+   - Motors remain desabled if `run_flag == 0`
+   - If `run_flag == 1` it transitions to the next state   
+2. `S1_RUN`
+   - Once `run_flg == 1` it reads `omega_r` / `omega_l` from shares
+   - It then uses a PID to match actual speeds.
+- **Key Variables**  
+  - `omega_r`, `omega_l`, `run_flg`.  
+  - Encoder velocity feedback from `Encoder.py`.
+- **How It Works**  
+  - If `run_flg` = 1, calls `Motor.enable()`, enabling the motors.  
+  - Compares actual speed to the setpoint.  
+  - Uses `PID.py` to calculate an effort and then calls `Motor.set_effort(effort)` to physically drive the motor to the setpoint.
+ 
+#### **6. Collision_Detect_task.py**
+
+- **Purpose**: The purpose of this task it to monitor the bumper states and detect collisions. If a collision occurs it raises a flag for Master Mind to handle.
+- **FSM**  
+1. `S0_WAIT_FOR_COLLISION`  
+    - If a bumper press is detected (`task_Bump.py`), sets `bump_flg = 1`.
+    - If `bump_flg = 1` it transitions to the next state.
+2. `S1_ACKNOWLEDGE_COLLISION`  
+    - Waits until `bump_flg` is cleared by **MM.py**.
+    - One `bump_flg` is cleared it then returns to `S0_WAIT_FOR_COLLISION`.
+- **Key Variables**  
+  - `bump_flg`: collision flag.  
+- **How It Works**  
+  - During each cycle run it checks if any bumper has been pressed.  
+  - If collision occurs and the bumper is pressed it sets `bump_flg = 1` so that Master Mind or other logic can respond.
+
+---
+
+### Driver Classes
+
