@@ -359,3 +359,85 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 
 ### Driver Classes
 
+#### 1. Encoder.py
+- **Purpose**: This class is in charge of interpreting quadrature encoder signals and producing both position and velocity data for each motor.
+- **What It Does**:
+  - Configures a timer in ENC_AB mode for pins (chA, chB).
+  - The `update()` method calculates `delta`, which is equal to, current counter - `prev_count`.
+  - Corrects for overflow if the timer wraps.
+  - Accumulates `position` and calculates velocity by storing deltas over time.
+  - Returns linear positon in mm using wheel geometry through the `get_lin_position` method.
+- **Assigned to Help**:
+  - **motorstask.py**: uses encoder velocity for PID speed control.
+  - **grid_task.py**: uses position to measure distance traveled during tunnel navigation.
+
+#### 2. Motor.py
+- **Purpose**: This class offers an interface for controlling a DC motor’s direction and speed though PWM signals.
+- **What It Does**:
+  - Sets up a timer channel for PWM output, direction pin, and a sleep pin.
+  - In the `set_effort(effort)` method it uses the sign of `effort` to set direction and the magnitude for the PWM duty cycle.
+- **Assigned to Help**:
+  - **motorstask.py**: uses `set_effort()` each cycle to realize the PID output for each motor.
+  - **MM.py**: and other tasks can call `enable()` / `disable()` to stop Romi safely.
+
+#### 3. IMU.py
+- **Purpose**: This class communicates with the BNO055 IMU sensor to obtain heading, roll, pitch, and calibration data.
+- **What It Does**:
+  - Uses I²C to configure the BNO055 in a particular mode (e.g., IMU, NDOF).
+  - The `read_eul_angles()` method retrieves heading, roll, and pitch Euler angles from internal registers.
+  - Provides read/write functions for calibration or operation modes.
+- **Assigned to Help**:
+  - **grid_task.py**: uses this class for cardinal direction turning.
+  - **MM.py**: for advanced orientation-based state transitions. CARTER VERIFY THIS!!!
+
+#### 4. IR_Array.py
+- **Purpose**: This class combines multiple IR sensors into one array, providing a centroid.
+- **What It Does**:
+  - Instantiates multiple `IR_Sensor.py` objects, each referencing a different ADC pin.
+  - The `update()` method iterates through each sensor, collects normalized values, computes unweighted (`u_sum`) and weighted (`w_sum`) sums.
+  - The `get_centroid()` method returns a float in the 0 to 13 range, indicating line offset.
+  - The `find_line()` method returns an integer code, were 0 = on a line, 1 = line lost, 2 = thick line.
+- **Assigned to Help**:
+  - **line_task.py**: uses this class for continuous line following.
+  - **line_finder.py**: uses this class for transitions or intersection detection.
+
+#### 5. IR_Sensor.py
+- **Purpose**: This class is a low-level driver class used for a single IR sensor, reading ADC and normalizing it based on black/white calibration.
+- **What It Does**:
+  - Defines `self.white` and `self.black` thresholds found through `sensor_calibration.py`.
+  - The `update()` method reads raw ADC values and then transforms it into a 0–1000 scale.
+  - The `read_value()` method returns the raw ADC value.
+  - The `read_normal()` method returns a normalized integer value between 0-1000. 
+- **Assigned to Help**:
+  - **IR_Array.py**: calls this class for each sensor channel
+  - **line_finder.py** / **line_task.py**: use data collected from this class to steer or detect line transitions
+
+##### 6. PID.py
+- **Purpose**: This class is a generic PID controller used by tasks requiring closed-loop control.
+- **What It Does**:
+  - In the `control(sp, pv, now)` method it calculates `error = sp - pv` and updates integral and derivative terms.
+  - This method returns a control output `cv` used to set motor PWM or yaw rate.
+- **Assigned to Help**:
+  - **motorstask.py**: with speed or velocity control.
+  - **line_task.py**: with offset correction for line following.
+  - **grid_task.py**: for heading alignment. CARTER VERIFY THIS
+
+#### 7. task_Bump.py
+- **Purpose**: This class sets up the low-level bumper inputs, configuring interrupts or polling to detect contact.
+- **What It Does**:
+  - Initializes `ExtInt` objects on each bumper pin with `IRQ_FALLING`, meaning it now looks for a falling edge.
+  - On interrupt this class calls `set_flag(line)` that sets `self.bump_state = True`.
+- **Assigned to Help**:
+  - **Collision_Detect_task.py**: uses this driver to read `get_button_state()` or `bump_state` to raise `bump_flg`.
+  - **MM.py**: checks if the `bump_flg` indicating a collision needs to override the entire state machine.
+ 
+#### 8. sensor_calibration.py
+- **Purpose**: This class is a standalone script for calibrating the IR sensors, it runs offline to establish `white` and `black` thresholds.
+- **What It Does**:
+  - Logs and prints ADC values as the sensor hovers over black and white surfaces. 
+  - User updates **IR_Sensor.py** based on these observed values.
+- **Assigned to Help**:
+  - **IR_Array.py** / **IR_Sensor.py**: helps these driver classes indirectly to produce accurate line detection data.
+  - Important: Not used during normal robot operation—just a calibration tool.
+
+  
