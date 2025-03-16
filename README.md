@@ -8,9 +8,7 @@ A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module
 - [Electrical Design](#electrical-design)
 - [Mechanical Design](#mechanical-design)
 - [Motor Characterization](#motor-characterization)
-- [Code Descriptions](#code-descriptions)
-  - [Core Files](#core-files)
-  - [Task Files](#task-files)
+- [Code Description](#code-descriptions)
 
 ---
 
@@ -147,4 +145,13 @@ The resulting values determined in this step are shown below
 
 
 ## Code Descriptions
+
+### Scheduler
+
+#### **main.py**
+
+**Purpose**:
+`main.py` is the central coordinating file that initializes shared data structures and creates task objects. In addition, it uses cooperative multitasking through the use of `cotask` to "hop" between tasks. Most importantly, this is were you set up each individual task and manage which tasks run, in what order, and how frequentely. 
+
+**Inner Workings**:
 
