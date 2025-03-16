@@ -40,7 +40,7 @@ A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module
   3. Detect collisions using bump sensors and respond accordingly.
 
 **Romi Setup**:
-
+The Romi has to be placed inside of the starting box facing the first line. The board remians plugged into the computer until the porgram has initialized successfully. Once initialization is complete, we unplugged Tomi from the computer, pressed the blue button on the Nucleo, and alllowed it to run on the course independently.
 
 **Demonstration**:
 ```markdown
@@ -48,16 +48,23 @@ A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module
 [YouTube Demo Video](https://youtu.be/your-demo-link)
 ```
 
-
 ## Features
-1. **Line-Following**: To keep the on track IR sensors and a PID controller were used.
-2. **Grd/Tunnel Navigation**: To move in cardinal directions, encoders and IMU-based heading are used
-3. 
+1. **Line-Following**: Infrared sensor and a PID controller assist Romi in ramaining on track.
+2. **Grid/Tunnel Navigation**: To move in cardinal directions, encoders and IMU-based heading were used.
+3. **Collision Detection**: Bump sensors triggered by collision allow Romi to detect and maneuver obstacles encountered.
+4. **MicroPython**: A STM32-based microcontroller runs python and leverages `cotask` and `task_share` for real-time task scheduling. Additionally, tasks are split into distinct `.py` modules to enable cooperative multitasking.
+5. **Custom Mounts**: Custom 3D printed line sensor and bump senser mounts were implemented to allow for proper installation and usage.
+
+## Bill of Materials 
+| Item                | Quantity | Description                     | Link / Source       |
+|---------------------|----------|---------------------------------|---------------------|
+| Pololu Romi Chassis | 1        | Romi base with 2 DC motors      | [Pololu Romi](...)  |
+| STM32-L476RG        | 1        | MicroPython-compatible MCU      | [STM32 Board](...)  |
+| DRV8838 Drivers     | 1-2      | Motor drivers (if not onboard)  | [DRV8838](...)      |
+| BNO055 Sensor       | 1        | IMU for orientation             | [BNO055](...)       |
+| IR Sensors          | 13       | Reflective IR for line sensing  | [Sensors](...)      |
+| Bump Switches       | 4        | Collision sensors               | [Switches](...)     |
+| Assorted Wires      | Many     | Jumper cables, etc.            | —                   |
 
 
-In this project, a Pololu Romi chassis is outfitted with:
-- An STM32-based microcontroller running MicroPython.
-- A BNO055 IMU for orientation and heading data.
-- Infrared sensors for line detection.
-- Bump sensors for collision/wall detection.
-- Two DC motors with encoders, driven by DRV8838 drivers, found in the power distribution board.
+
