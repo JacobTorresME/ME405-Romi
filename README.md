@@ -206,7 +206,7 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 #### **1. MM.py (Master Mind)**
 
 - **Purpose**: Acts as the main handler, it implements a FSM machine to control overall behavior
-- **FSM States**:
+- **FSM State Breakdown**
 1. `S0_STANDBY`:
     - Waits for a user button press or for the `run_flg` to become `
     - One triggered, it moves to finding the.
@@ -249,7 +249,7 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
   - `fwd_flg` sets forward or backward motion.
   - `yaw_rate` or `omega_r/l` for controlling turning or speed in each state.
 
-- **How it Works**:
+- **How it Works**
   - Each Finite State Machine state in the generator function checks relevant flags/sensors.  
   - If conditions are met it transitions to the next state.
   - This set up allows Master Mind to set a step by step process for Romi from initial placement all the way back to the start.
@@ -259,25 +259,64 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 #### **2. grid_task.py**
 
 - **Purpose**: This task is in charge of the grid/tunnel navigation portion, using an internal FSM to perform heading adjustments and distance-based travel.
-- **FSM Structure**
-  1. `S0_INIT`  
+- **FSM State Breakdown**
+1. `S0_INIT`  
      - Reads and stores the robot’s current IMU heading.  
      - Waits for `grid_flg == 1`.
-  2. `S1_STANDBY`  
+2. `S1_STANDBY`  
      - Idle state, monitoring `grid_flg`.
      - If `grid_flg` becomes 1 it proceeds to the next state.
-  3. `S2_TURN_SOUTH`  
+3. `S2_TURN_SOUTH`  
      - Alings Romis heading to 2880, representing south.  
      - Continuously reads the heading from the IMU
      - Updates `yaw_rate` using a small heading PID (or direct turn logic).  
      - Once aligned, sets `fwd_flg = 1`and transitions to the next state.
-  4. `S3_DRIVE_SOUTH`  
+4. `S3_DRIVE_SOUTH`  
      - Moves forward until encoders indicate a certain distance.  
      - Once the distance is reached it transitions to the next state.  
      - Once the tunnel ends it sets `grid_flg = 0` to exit grid mode.
-  5. `S4_TURN_WEST`  
-     - Alings Romis heading to 4320, representing West.
-     - Then sets `fwd_flg = 1` and transitions to the next state.
-  6. `S5_DRIVE_WEST`, etc.  
-     - Additional states as needed to complete the route.  
-     - Each drive state checks encoders to track distance, transitions out when done.
+  
+- **Key Variables**  
+  - `heading` from `IMU.py`.  
+  - `left_start` / `right_start` for storing initial encoder positions.  
+  - `grid_flg` to activate or deactivate the grid task.  
+  - `yaw_rate` sets turning commands.
+
+- **How It Works**  
+  - Each time the generator runs, it checks its current FSM state.  
+  - Aligns Romis heading and drives a fixed distance in that prescribed heading.  
+  - Moves to the next state when the target heading or distance is achieved.
+ 
+#### **3. line_task.py**
+
+- **Purpose**: This task is in charge of performing line-following using a Infrared sensor data and a PID for steering correction.
+- **FSM State Breakdown**  
+1. `S0_STANDBY`
+   - Waits for `line_follow_flg == 1`.
+2. `S1_RUN`:
+   - Actively calculates line offset, feeding a PID to adjust `yaw_rate`.
+- **Key Variables**  
+  - `line_follow_flg`, `fwd_flg`, `yaw_rate`.  
+  - Reads the Infrared sensor centroid from `IR_Array.py`.
+- **How It Works**  
+  - In the `SO_STANDBY` state it waits to be activated 
+  - While it is in `S1_RUN` state, during each cycle run it...
+     - Gets the IR centroid.  
+     - Error of the centriod (centroid - 7).  
+     - Uses a PID to calculate a correction.  
+     - The correction is written to `yaw_rate`, which **motorstask.py** uses for left/right speed differences.
+
+#### **4. line_finder.py**
+
+- **Purpose**: The task is in charge of alerting the system when the line is lost or re-found.
+- **FSM State Breakdown**
+1. `S0_LOOK_FOR_LINE`
+    - If IR data indicates a line is lost, sets `line_flg = 1`, transitions to `S1_LOOK_FOR_ACK`.  
+2. `S1_LOOK_FOR_ACK`  
+    - Waits until `line_flg` is cleared. Then returns to `S0_LOOK_FOR_LINE`.
+- **Key Variables**  
+  - `line_flg`, `line_value`.  
+- **How It Works**  
+  - Summation or threshold logic checks IR readings.  
+  - If it crosses a threshold, notifies the rest of the system via `line_flg`.  
+  - Master Mind or line_task acknowledges by resetting `line_flg`.
