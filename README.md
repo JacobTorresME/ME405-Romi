@@ -469,7 +469,11 @@ The following diagrams are a visual representation of each tasks finite state ma
 
 #### MM FSM
 
+![MM 11](https://github.com/user-attachments/assets/245a1f70-c5f4-425f-8904-b5e9e69c22ad)
 
+![MM 2](https://github.com/user-attachments/assets/95c17358-4c2b-4aaa-8179-8b3c09cc4449)
+
+![MM 3](https://github.com/user-attachments/assets/1b38244d-e064-428d-9b46-d7b1c246c85d)
 
 #### grid_task FSM
 
