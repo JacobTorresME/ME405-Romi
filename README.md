@@ -11,6 +11,11 @@ A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' modul
 - [Mechanical Design](#mechanical-design)
 - [Motor Characterization](#motor-characterization)
 - [Code Description](#code-descriptions)
+  1. [Scheduler](#scheduler)
+  2. [Tasks](#tasks)
+  3. [Driver Classes](#driver-classes)
+- [Finite State Machine](#finite-state-machines)
+ 
 
 ---
 
@@ -79,9 +84,9 @@ The Romi is wirred to an STM32-L476RG Nucleo board. This allows for the integrat
 A wiring diagram demonstrating how each one of the components above is connect can be seen in the diagrema below
 
 **Wiring Diagram of Romi**
-```markdown
-Insert Romi wiring diagram here
-```
+
+![Wirring diagram](https://github.com/user-attachments/assets/00a5ec8c-57e4-498f-9205-3ae597e32f00)
+
 This wiring diagram helped us ensure real-time feedback and control, which at the end was a crucial component that allowed Romi to navigate and complete the course. 
 
 ## Mechanical Design
@@ -105,9 +110,7 @@ In adjusting our Romi chassis to accommodate thr line sensor, we inadvertently c
 ![straightbracket](https://github.com/user-attachments/assets/5bcad4c5-5f56-4dc2-9b05-b571167e1617)
 
 ### Romi Assembly
-The bracket arms for the line sensors were secured using M2.5 bolts while the bracket arms for the bump sensors were secured using M2.0 bolts. Additionally, the bump sensors used washers and M2.0 nuts to fully secure the bump sensors onto the Romi chassis. The fully assembled Romi can be seen in the picture below. 
-
-
+The bracket arms for the line sensors were secured using M2.5 bolts while the bracket arms for the bump sensors were secured using M2.0 bolts. Additionally, the bump sensors used washers and M2.0 nuts to fully secure the bump sensors onto the Romi chassis. 
 
 ## Motor Characterization
 To properly control the DC motors we performed characterization tests for the left and right motors, to find the motors gain, time constant, and minimal effort required to make the motor turn. The tests consisted of producing a step response by setting the percent PWM going to each of the motors from 0% to 70%. We collected the Time, Position, and Velocity of each of the motors, at a sampling rate of 1000Hz, and saw how the properties of the motor evolved over time.
@@ -115,9 +118,11 @@ To properly control the DC motors we performed characterization tests for the le
 To find each motors gain and startup effort we extracted the steady-state velocity from the last data points of each run on the Velocity vs. Time plots. We then created a scatter plot of the Steady-State Velocity vs. Input Voltage and calculated the best fit line using linear regression. The slope of this line represented the motor gain and the y-intercept of the line represented the minimum voltage required to overcome static friction (startup effort). The Motor Gain and Startup Effort plots are shown below.
 
 **Motor Gain and Minimum Effort Required Plot**
-```mardown
-Motor gain plot goes here
-```
+
+![Motor Gain Right](https://github.com/user-attachments/assets/bfdc0774-277a-4a3b-8fa5-8c5f93a92a9d)
+
+![Motor Gain Left](https://github.com/user-attachments/assets/c656dc40-7df3-4b04-820e-04f81bc7017b)
+
 To calculate the each of the motors time constant (τ) we used a the following logarithmic transformation
 
 $\ln \left( 1 - \frac{\omega}{\omega_{\max}} \right)$
@@ -135,9 +140,10 @@ $$
 From here a linear regression was performed on the transformed data were the negative inverse of the slope was taken to determine each of the motors time constants (τ). The Linearized Output vs. Time plots are shown below. 
 
 **Linearized Output vs. Time Plot**
-```markdown
-Plots go here
-```
+
+![Linerized Right](https://github.com/user-attachments/assets/df6875b3-0d9c-4665-aa6e-a6213b968579)
+
+![Linerized Left](https://github.com/user-attachments/assets/df80ad48-20e9-4971-9707-cb51dc96db5a)
 
 The resulting values determined in this step are shown below
 
@@ -146,6 +152,11 @@ The resulting values determined in this step are shown below
 | Left  | 6.73                 | 0.0721            | 0.61                        |
 | Right | 6.39                 | 0.0698            | 1.01                        |
 
+## Block Diagram of the System
+
+The following diagram is a visual representation of the control diagram used for Romi. We opted for the cascaded control system. 
+
+![System block diagram](https://github.com/user-attachments/assets/61e7de7e-2b91-491c-856e-ba027a907a41)
 
 ## Code Descriptions
 
@@ -446,4 +457,8 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
   - **IR_Array.py** / **IR_Sensor.py**: helps these driver classes indirectly to produce accurate line detection data.
   - Important: Not used during normal robot operation—just a calibration tool.
 
-  
+## Finite State Machines
+
+The following diagrams are a visual representation of each tasks finite state machine.
+
+####
