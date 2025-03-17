@@ -30,7 +30,7 @@ A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' modul
 **Track Reference**:
 
 ```markdown
-![Track Layout](docs/track_layout.jpg)
+![Track](https://github.com/user-attachments/assets/4f613982-a758-495c-ba7b-723a83e253e3)
 ```
 **Romi can**:
   1. Follow black lines using IR sensors and a PID controller.  
