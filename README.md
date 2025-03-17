@@ -62,13 +62,13 @@ The Romi has to be placed inside of the starting box facing the first line. The 
 ## Bill of Materials (BOM)
 | Item                | Quantity | Description                     | Link / Source       |
 |---------------------|----------|---------------------------------|---------------------|
-| Pololu Romi Chassis | 1        | Romi base with 2 DC motors      | [Pololu Romi](...)  |
-| STM32-L476RG        | 1        | MicroPython-compatible MCU      | [STM32 Board](...)  |
-| DRV8838 Drivers     | 1-2      | Motor drivers (if not onboard)  | [DRV8838](...)      |
-| BNO055 Sensor       | 1        | IMU for orientation             | [BNO055](...)       |
-| IR Sensors          | 13       | Reflective IR for line sensing  | [Sensors](...)      |
-| Bump Switches       | 4        | Collision sensors               | [Switches](...)     |
-| Assorted Wires      | Many     | Jumper cables, etc.            | —                   |
+| Pololu Romi Chassis | 1        | Romi base with 2 DC motors      | [Pololu Romi](https://www.pololu.com/category/203/romi-chassis-kits)  |
+| STM32-L476RG        | 1        | MicroPython-compatible MCU      | [STM32 Board](https://estore.st.com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-l476rg.html)  |
+| Power Distribution Board & DRV8838 Motor Drivers     | 1         | Distributes power and contains two motor drivers  | [Power Distribution Board](https://www.pololu.com/product/3543)      |
+| BNO055 Sensor       | 1        | IMU for orientation             | [BNO055](https://www.adafruit.com/product/2472)       |
+| IR Sensors          | 1       | Reflective IR for line sensing  | [IR Sensors](https://www.pololu.com/category/203/romi-chassis-kits)      |
+| Bump Switches       | 2        | Collision sensors               | [Left Bump Sensor](https://www.pololu.com/product/3673) [Right Bump Sensor](https://www.pololu.com/product/3674) |
+| Assorted Wires      | Many     | Jumper cables, etc.            | [Cables](https://www.amazon.com/dp/B07GCY6CH7?th=1)                   |
 
 ## Electrical Design
 The Romi is wirred to an STM32-L476RG Nucleo board. This allows for the integration of multiple sensors and motor controller that facilitate course navigation and obstacle detection. The set up includes:
