@@ -1,5 +1,7 @@
 # Mechatronics Romi Project
-A MycroPython-based Romi robot porject use and STM32 board (via the 'pyb' module)
+A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' module). 
+
+**By Jacob Torres and Carter Josef**
 
 ## Table of Contents
 - [Overview & Objectives](#overview--objectives)
