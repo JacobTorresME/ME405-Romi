@@ -14,7 +14,7 @@ A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' modul
   1. [Scheduler](#scheduler)
   2. [Tasks](#tasks)
   3. [Driver Classes](#driver-classes)
-- [Finite State Machine](#finite-state-machines)
+- [Finite State Machines](#finite-state-machines)
  
 
 ---
@@ -157,6 +157,12 @@ The resulting values determined in this step are shown below
 The following diagram is a visual representation of the control diagram used for Romi. We opted for the cascaded control system. 
 
 ![System block diagram](https://github.com/user-attachments/assets/61e7de7e-2b91-491c-856e-ba027a907a41)
+
+## Task Diagram
+
+The following diagram is a visual representation of the different tasks within our program.
+
+![Task Diagram](https://github.com/user-attachments/assets/bc643e5d-b804-4495-b54b-274ff1b2d720)
 
 ## Code Descriptions
 
@@ -461,4 +467,26 @@ Each one of these tasks use a **Finite State Machine** within each of their `gen
 
 The following diagrams are a visual representation of each tasks finite state machine.
 
-####
+#### MM FSM
+
+
+
+#### grid_task FSM
+
+![grid task](https://github.com/user-attachments/assets/5f91b217-cb1e-4420-9249-c616d0ce81a1)
+
+#### line_task FSM
+
+![line follow](https://github.com/user-attachments/assets/c238e9e4-0c15-4e8a-94d3-598ce3675b60)
+
+#### line_finder FSM
+
+![line finder](https://github.com/user-attachments/assets/9c18f80f-a389-405b-bcb6-cc2b7017697d)
+
+#### motortask FSM
+
+![motor task](https://github.com/user-attachments/assets/811b49d9-0abc-4592-98b7-174e89465177)
+
+#### Collision_Detect_task FSM
+
+![collision task](https://github.com/user-attachments/assets/e364bd88-c75c-440a-bb5a-08f991e1fe5b)
