@@ -154,13 +154,13 @@ The resulting values determined in this step are shown below
 
 ## Block Diagram of the System
 
-The following diagram is a visual representation of the control diagram used for Romi. We opted for the cascaded control system. 
+The following diagram is a visual representation of the control diagram used for Romi. We opted for the cascaded control system. We used a PID controller for each wheel. The input to this is a motor speed. The encoder provides feedback to ensure that each wheel is spinning at the desired rate. Linear velocity and angular velocity of Romi are decoupled into individual wheel velocities. This is checked with a PID controller using the IMU and line sensor for feedback.
 
 ![System block diagram](https://github.com/user-attachments/assets/61e7de7e-2b91-491c-856e-ba027a907a41)
 
 ## Task Diagram
 
-The following diagram is a visual representation of the different tasks within our program.
+The following diagram is a visual representation of the different tasks within our program. Each task is discussed in further detail below.
 
 ![Task Diagram](https://github.com/user-attachments/assets/bc643e5d-b804-4495-b54b-274ff1b2d720)
 
