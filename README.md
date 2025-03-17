@@ -29,9 +29,8 @@ A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' modul
 
 **Track Reference**:
 
-```markdown
 ![Track](https://github.com/user-attachments/assets/4f613982-a758-495c-ba7b-723a83e253e3)
-```
+
 **Romi can**:
   1. Follow black lines using IR sensors and a PID controller.  
   2. Navigate a grid/tunnel utilizing IMU headings and encoder distance data.  
@@ -40,11 +39,13 @@ A MycroPython-based Romi robot project using an STM32 board (via the 'pyb' modul
 **Romi Setup**:
 The Romi has to be placed inside of the starting box facing the first line. The board remians plugged into the computer until the porgram has initialized successfully. Once initialization is complete, we unplugged Tomi from the computer, pressed the blue button on the Nucleo, and alllowed it to run on the course independently.
 
+**Romi**:
+
+![Romi](https://github.com/user-attachments/assets/e1513827-d615-40be-9a17-84f75ae3b03e)
+
 **Demonstration**:
-```markdown
-![Romi Robot in Action](docs/romi_in_action.jpg)
-[YouTube Demo Video](https://youtu.be/your-demo-link)
-```
+
+[YouTube Demo Video](https://www.youtube.com/watch?v=X8mRvTR4OUs)
 
 ## Features
 1. **Line-Following**: Infrared sensor and a PID controller assist Romi in ramaining on track.
@@ -91,17 +92,17 @@ The mechanical design modifications to the original Romi chasis were primarily d
 Due to our line sensor being 14 mm in length the conventional standoff configuration rendered impractical without additional modifications. To securely mount our line sensor, we 3D printed custom bracket arms, as shown below. These bracket arms allowed us to use the original standoffs and position the line sensor flush with the bottom of Romis chassis and at the very front of Romi for optimal performance. 
 
 **CAD picture of Line-Sensor Arms**
-```mardown
-CAD picture of the Mounts
-```
+
+![IRsensor](https://github.com/user-attachments/assets/7b22426c-50b5-4191-b391-41907beb0665)
+
 
 ### Bump Sensor Mounts
 In adjusting our Romi chassis to accommodate thr line sensor, we inadvertently caused some fitment issues with the bump sensors. The bolts securing the standoffs prevented the bump sensors from sitting flush on top of Romi. Additionally, the bump sensors did not extend far enough past the line sensor, leaving it exposed and failing to detect collisions in these places. To resolve this, we fabricated two custom brackets: an L-shaped bracket and a straight bracket for each of the bump sensors. These brackets allowed the sensors to be mounted securely while ensuring they extended far enough to protect the line sensor and detect obstacles effectively. Furthermore, each bracket was __mm thick, allowing a precise fit above the bolts securing components at the bottom of the Romi chassis. Finally, the combination of both brackets allowed for the bump sensors to remain rigid and in place, including after collision. 
 
 **CAD Picture of Bump Bracket Arms**
-```mardown
-CAD picture of the Mounts
-```
+
+![Lbrackets](https://github.com/user-attachments/assets/0cbf78c7-c276-42ef-b838-8ac41f9c919c)
+![straightbracket](https://github.com/user-attachments/assets/5bcad4c5-5f56-4dc2-9b05-b571167e1617)
 
 ### Romi Assembly
 The bracket arms for the line sensors were secured using M2.5 bolts while the bracket arms for the bump sensors were secured using M2.0 bolts. Additionally, the bump sensors used washers and M2.0 nuts to fully secure the bump sensors onto the Romi chassis. The fully assembled Romi can be seen in the picture below. 
