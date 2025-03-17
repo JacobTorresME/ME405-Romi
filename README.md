@@ -68,7 +68,7 @@ The Romi has to be placed inside of the starting box facing the first line. The 
 | BNO055 Sensor       | 1        | IMU for orientation             | [BNO055](https://www.adafruit.com/product/2472)       |
 | IR Sensors          | 1       | Reflective IR for line sensing  | [IR Sensors](https://www.pololu.com/category/203/romi-chassis-kits)      |
 | Bump Switches       | 2        | Collision sensors               | [Left Bump Sensor](https://www.pololu.com/product/3673) [Right Bump Sensor](https://www.pololu.com/product/3674) |
-| Assorted Wires      | Many     | Jumper cables, etc.            | [Cables](https://www.amazon.com/dp/B07GCY6CH7?th=1)                   |
+| Dupont Wires      | Many     | Female to female            | [Wires](https://www.amazon.com/dp/B07GCY6CH7?th=1)                   |
 
 ## Electrical Design
 The Romi is wirred to an STM32-L476RG Nucleo board. This allows for the integration of multiple sensors and motor controller that facilitate course navigation and obstacle detection. The set up includes:
